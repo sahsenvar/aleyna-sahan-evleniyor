@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <meta name="darkreader-lock" />
+  <title>Anı Albümü — Çift Görünümü</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sacramento&family=Roboto+Condensed:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root { --accent:#4b4152; --rose:#ba688d; --line:#e7e2e6; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:"Roboto Condensed",system-ui,sans-serif; color:var(--accent); background:#faf7f5; padding:1.5rem 1rem 4rem; }
+    h1 { font-family:"Sacramento",cursive; font-size:42px; text-align:center; color:var(--accent); }
+    .sub { text-align:center; color:#9b8f97; font-size:14px; margin:.2rem 0 1.5rem; }
+    .keybar { max-width:420px; margin:0 auto 1.2rem; display:flex; gap:.5rem; }
+    .keybar input { flex:1; padding:.6rem .8rem; border:1px solid var(--line); border-radius:8px; font-size:14px; }
+    .keybar button { padding:.6rem 1.1rem; border:0; border-radius:8px; background:var(--rose); color:#fff; cursor:pointer; }
+    .msg { text-align:center; color:#9b8f97; margin:1.5rem 0; }
+    .grid { max-width:1000px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:1rem; }
+    .card { background:#fff; border:1px solid var(--line); border-radius:12px; overflow:hidden; box-shadow:0 4px 14px rgba(75,65,82,.08); }
+    .card img, .card video { display:block; width:100%; aspect-ratio:1/1; object-fit:cover; background:#f0ebee; }
+    .voice { aspect-ratio:1/1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.5rem; padding:.6rem; background:linear-gradient(140deg,#f3e6ee,#efe1ea); }
+    .voice .ico { font-size:1.8rem; }
+    .voice audio { width:100%; }
+    .meta { padding:.5rem .6rem; font-size:12.5px; }
+    .meta b { color:var(--accent); }
+    .meta span { color:#9b8f97; }
+  </style>
+</head>
+<body>
+  <h1>Anı Albümü</h1>
+  <p class="sub">Çifte özel görünüm — misafirlerin paylaştığı tüm anılar</p>
+
+  <div class="keybar">
+    <input id="key" type="password" placeholder="Admin anahtarı" autocomplete="off" />
+    <button id="go" type="button">Göster</button>
+  </div>
+  <div id="msg" class="msg">Anahtarı girip "Göster"e bas.</div>
+  <div id="grid" class="grid"></div>
+
+  <script src="config.js"></script>
+  <script>
+    const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const fmtDate = (s) => { try { return new Date(s).toLocaleString("tr-TR"); } catch (_) { return ""; } };
+    const fmtDur = (s) => (s == null ? "" : Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"));
+    const grid = document.getElementById("grid");
+    const msg = document.getElementById("msg");
+    const keyInput = document.getElementById("key");
+
+    async function load(key) {
+      if (!key) { msg.textContent = "Anahtar gerekli."; return; }
+      msg.textContent = "Yükleniyor…"; grid.innerHTML = "";
+      try {
+        const r = await fetch(window.SUPABASE_URL + "/functions/v1/admin-memories?key=" + encodeURIComponent(key));
+        const d = await r.json();
+        if (!r.ok) { msg.textContent = "Hata: " + (d.error || r.status) + (r.status === 401 ? " (anahtar yanlış)" : ""); return; }
+        localStorage.setItem("admin_key", key);
+        const mems = d.memories || [];
+        if (!mems.length) { msg.textContent = "Henüz anı eklenmemiş."; return; }
+        msg.textContent = mems.length + " anı";
+        mems.forEach((m) => {
+          const c = document.createElement("div"); c.className = "card";
+          let media;
+          if (m.type === "photo") media = '<img src="' + esc(m.url) + '" loading="lazy" />';
+          else if (m.type === "video") media = '<video src="' + esc(m.url) + '" controls preload="metadata"></video>';
+          else media = '<div class="voice"><span class="ico">🎙️</span><audio src="' + esc(m.url) + '" controls></audio><span>' + fmtDur(m.duration) + '</span></div>';
+          c.innerHTML = media + '<div class="meta"><b>' + esc(m.name || "Anonim") + '</b><br><span>' + fmtDate(m.created_at) + "</span></div>";
+          grid.appendChild(c);
+        });
+      } catch (e) { msg.textContent = "Bağlantı hatası: " + e.message; }
+    }
+
+    document.getElementById("go").addEventListener("click", () => load(keyInput.value.trim()));
+    keyInput.addEventListener("keydown", (e) => { if (e.key === "Enter") load(keyInput.value.trim()); });
+
+    const urlKey = new URLSearchParams(location.search).get("key");
+    const saved = urlKey || localStorage.getItem("admin_key");
+    if (saved) { keyInput.value = saved; load(saved); }
+  </script>
+</body>
+</html>

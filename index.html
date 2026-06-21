@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <meta name="darkreader-lock" />
+  <title>Aleyna &amp; Şahan — Düğün Davetiyesi</title>
+  <meta name="description" content="Aleyna & Şahan'ın düğün davetiyesi" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sacramento&family=Vidaloka&family=Roboto+Condensed:wght@300;400;500;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Cloudflare Turnstile (RSVP spam koruması; explicit render — script.js yönetir) -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+</head>
+<body>
+
+  <!-- ============ ARKA PLAN MÜZİĞİ (sol üst floating buton) ============ -->
+  <div class="music-dock is-hint" id="musicDock">
+    <button class="music-toggle is-off" id="musicToggle" type="button" data-i18n-aria="music.aria" aria-label="Müziği aç/kapat" aria-pressed="false">
+      <svg class="music-toggle__note" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 17V4l10-2v13" />
+        <circle cx="6" cy="17" r="3" />
+        <circle cx="16" cy="15" r="3" />
+      </svg>
+      <span class="music-toggle__slash" aria-hidden="true"></span>
+    </button>
+    <span class="music-toggle__hint" data-i18n="music.hint" aria-hidden="true">🎵 dokun</span>
+  </div>
+  <audio id="bgMusic" loop preload="auto">
+    <source src="assets/music.mp3" type="audio/mpeg" />
+    <source src="assets/music.webm" type="audio/webm" />
+  </audio>
+
+  <!-- ============ DİL SEÇİCİ (sağ üst floating bayraklar) ============ -->
+  <div class="lang-dock" id="langDock" role="group" aria-label="Dil / Language">
+    <button class="lang-btn" type="button" data-lang="tr" aria-pressed="false" title="Türkçe"><span aria-hidden="true">🇹🇷</span></button>
+    <button class="lang-btn" type="button" data-lang="fr" aria-pressed="false" title="Français"><span aria-hidden="true">🇫🇷</span></button>
+    <button class="lang-btn" type="button" data-lang="en" aria-pressed="false" title="English"><span aria-hidden="true">🇬🇧</span></button>
+  </div>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="hero">
+    <div class="hero__overlay"></div>
+    <div class="hero__content">
+      <p class="script hero__tagline" data-i18n="hero.tagline">Özel günler birlikte güzel..</p>
+      <h1 class="script hero__names">Aleyna &amp; Şahan</h1>
+
+      <div class="countdown" id="countdown" data-i18n-aria="cd.aria" aria-label="Düğüne kalan süre">
+        <div class="cd"><span class="cd__num" data-cd="days">00</span><span class="cd__lbl" data-i18n="cd.days">GÜN</span></div>
+        <div class="cd"><span class="cd__num" data-cd="hours">00</span><span class="cd__lbl" data-i18n="cd.hours">SAAT</span></div>
+        <div class="cd"><span class="cd__num" data-cd="minutes">00</span><span class="cd__lbl" data-i18n="cd.minutes">DAKİKA</span></div>
+        <div class="cd"><span class="cd__num" data-cd="seconds">00</span><span class="cd__lbl" data-i18n="cd.seconds">SANİYE</span></div>
+      </div>
+
+      <button class="btn btn--ghost" id="addCalendar" type="button">
+        <span class="btn__icon" aria-hidden="true">🗓</span> <span data-i18n="cta.calendar">Hatırlatıcı al</span>
+      </button>
+
+      <div class="scroll-cue" aria-hidden="true">
+        <span class="scroll-cue__mouse"><span class="scroll-cue__wheel"></span></span>
+        <span class="scroll-cue__text" data-i18n="scroll.cue">Aşağı kaydırınız.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NE ZAMAN & NEREDE + ANI ALBÜMÜ (birleşik, tam ekran) ============ -->
+  <section class="section section--meet" id="nerede">
+    <h2 class="script section__title" data-i18n="meet.title">Ne zaman &amp; Nerede</h2>
+
+    <div class="event-card">
+      <div class="event-card__overlay"></div>
+      <div class="event-card__inner">
+        <h3 class="script event-card__type" data-i18n="event.type">Düğün</h3>
+        <p class="serif event-card__date" data-i18n="event.date">15 Ağustos 2026 Cumartesi - Saat 18:30</p>
+        <p class="serif event-card__venue">Sabancı Öğretmenevi, Beykoz/İstanbul</p>
+        <p class="event-card__addr">Göksu, Küçüksu Cd. No:10, 34815 Beykoz/İstanbul</p>
+        <a class="btn btn--white" href="https://www.google.com/maps/dir/?api=1&amp;destination=41.0805625,29.0658125" target="_blank" rel="noopener">
+          <span class="btn__icon" aria-hidden="true">📍</span> <span data-i18n="event.directions">Yol Tarifi</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- ── Anı Albümü (aynı bölümde) ── -->
+    <div class="album" id="album">
+      <div class="album__header">
+        <h2 class="script album__title" data-i18n="album.title">Anı Albümü</h2>
+        <p class="album__subtitle" data-i18n="album.subtitle">Bu güzel günde çektiklerinizi bizimle paylaşın 💐</p>
+      </div>
+
+      <div class="album__actions">
+        <button class="album__add" id="addPhoto" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h3l2-2h8l2 2h3v12H3z" /><circle cx="12" cy="13" r="3.2" /></svg>
+          <span data-i18n="album.photo">Fotoğraf</span>
+        </button>
+        <button class="album__add" id="addVideo" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="2" /><path d="M16 10l5-3v10l-5-3z" /></svg>
+          <span data-i18n="album.video">Video</span>
+        </button>
+        <button class="album__add" id="addVoice" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 14 0" /><path d="M12 18v3" /></svg>
+          <span data-i18n="album.voice">Sesli Not</span>
+        </button>
+      </div>
+
+      <input type="file" id="photoInput" accept="image/*" hidden />
+      <input type="file" id="videoInput" accept="video/*" hidden />
+
+      <div class="recorder" id="recorder" hidden>
+        <div class="recorder__row">
+          <span class="recorder__dot" id="recDot"></span>
+          <span class="recorder__time" id="recTime">0:00</span>
+          <span class="recorder__hint" id="recHint" data-i18n="rec.hint">Sesli notunuzu kaydedin</span>
+        </div>
+        <audio id="recPreview" class="recorder__preview" controls hidden></audio>
+        <div class="recorder__controls">
+          <button id="recStart" type="button" class="btn btn--send recorder__btn" data-i18n="rec.start">● Kaydı Başlat</button>
+          <button id="recStop" type="button" class="btn btn--send recorder__btn" data-i18n="rec.stop" hidden>■ Durdur</button>
+          <button id="recSave" type="button" class="btn btn--send recorder__btn" data-i18n="rec.save" hidden>Albüme Ekle</button>
+          <button id="recCancel" type="button" class="btn btn--white recorder__btn" data-i18n="rec.cancel" hidden>Vazgeç</button>
+        </div>
+      </div>
+
+      <div class="album__grid" id="albumGrid"></div>
+    </div>
+  </section>
+
+  <!-- ============ DAVETLİ FORMU (RSVP) ============ -->
+  <section class="section section--form" id="form">
+    <div class="form__overlay"></div>
+    <div class="form__content">
+      <h2 class="script section__title section__title--light" data-i18n="rsvp.title">Davetli formu</h2>
+
+      <form id="rsvp" class="rsvp" novalidate>
+        <div class="field">
+          <label for="adsoyad" data-i18n="rsvp.name">Ad Soyad</label>
+          <input type="text" id="adsoyad" name="adsoyad" data-i18n-ph="rsvp.name" placeholder="Ad Soyad" autocomplete="name" />
+        </div>
+
+        <div class="field">
+          <label for="durum" data-i18n="rsvp.status">Katılım Durumu</label>
+          <select id="durum" name="durum">
+            <option value="" data-i18n="rsvp.select">Seçiniz</option>
+            <option value="katilacagim" data-i18n="rsvp.optYes">Katılacağım</option>
+            <option value="net-degil" data-i18n="rsvp.optMaybe">Net Değil</option>
+            <option value="katilmayacagim" data-i18n="rsvp.optNo">Üzülerek Katılmayacağım</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="kisi" data-i18n="rsvp.count">Toplam katılımcı sayısı</label>
+          <select id="kisi" name="kisi">
+            <option value="" data-i18n="rsvp.select">Seçiniz</option>
+            <option>0</option><option>1</option><option>2</option>
+            <option>3</option><option>4</option><option>5</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="not" data-i18n="rsvp.note">Hatıra notunuz</label>
+          <textarea id="not" name="not" rows="4" data-i18n-ph="rsvp.note" placeholder="Hatıra notunuz"></textarea>
+        </div>
+
+        <div id="turnstileBox" class="ts-box" hidden></div>
+
+        <button type="submit" class="btn btn--send" data-i18n="rsvp.send">GÖNDER</button>
+      </form>
+
+      <p class="form__thanks" id="thanks" data-i18n="rsvp.thanks" hidden>Teşekkürler! Katılım bildiriminiz alındı. 💐</p>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="i18n.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

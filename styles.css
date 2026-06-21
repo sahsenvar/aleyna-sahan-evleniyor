@@ -1,0 +1,587 @@
+/* ============================================================
+   Aleyna & Şahan — Düğün Davetiyesi
+   Tema değişkenleri
+   ============================================================ */
+:root {
+  --accent: #4b4152;      /* puslu mor-gri: açık bölüm başlık/metin */
+  --rose: #ba688d;        /* dusty rose: GÖNDER butonu */
+  --rose-dark: #a5577a;
+  --paper: #ffffff;
+  --line: #e7e2e6;
+
+  --script: "Sacramento", cursive;
+  --serif: "Vidaloka", serif;
+  --sans: "Roboto Condensed", system-ui, sans-serif;
+
+  /* Sistem şablon görselleri (başlangıçta uzak URL, birebir görünüm) */
+  --img-hero: url("https://edijitaldavetiye.com/system-invitations/bg-3.jpg");
+  --img-card: url("https://edijitaldavetiye.com/system-invitations/kpk-4.jpg");
+  --img-form: url("https://edijitaldavetiye.com/system-invitations/kpk-5.jpg");
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* hidden özniteliği her zaman gizlesin (display kuralları onu ezmesin) */
+[hidden] { display: none !important; }
+
+html { scroll-behavior: smooth; color-scheme: light; }
+
+body {
+  font-family: var(--sans);
+  color: var(--accent);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.script { font-family: var(--script); font-weight: 400; }
+.serif  { font-family: var(--serif); font-weight: 400; }
+
+/* ---------- Butonlar ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: normal;
+  border-radius: 999px;
+  padding: .7rem 1.6rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform .15s ease, background .2s ease, opacity .2s ease;
+  border: 1px solid transparent;
+}
+.btn:active { transform: scale(.97); }
+.btn__icon { font-size: 1rem; line-height: 1; }
+
+.btn--ghost {
+  background: rgba(0, 0, 0, 0);
+  color: #fff;
+  border-color: rgba(255, 255, 255, .5);
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .08);
+}
+.btn--ghost:hover { background: rgba(255, 255, 255, .12); }
+
+.btn--white {
+  background: #fff;
+  color: var(--accent);
+  border-color: var(--line);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .08);
+}
+.btn--white:hover { background: #faf7f9; }
+
+.btn--send {
+  background: var(--rose);
+  color: #fff;
+  width: 100%;
+  justify-content: center;
+  padding: .95rem;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: .04em;
+  margin-top: .5rem;
+}
+.btn--send:hover { background: var(--rose-dark); }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 2rem 1.25rem;
+  color: #fff;
+  background: var(--img-hero) center / cover no-repeat;
+  background-attachment: scroll;
+  overflow: hidden;
+}
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(120,105,110,.20) 0%, rgba(120,105,110,.05) 35%, rgba(120,105,110,.25) 100%);
+}
+.hero__content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
+  animation: fade-up 1.1s ease both;
+}
+.hero__tagline {
+  font-size: clamp(28px, 7vw, 35px);
+  line-height: 1.4;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, .25);
+  opacity: .95;
+}
+.hero__names {
+  font-size: clamp(40px, 11vw, 55px);
+  line-height: 1.15;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, .25);
+}
+
+/* ---------- Geri sayım ---------- */
+.countdown { display: flex; gap: .7rem; margin-top: .4rem; }
+.cd {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, .26);
+  background: transparent;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.cd__num { font-size: 20px; font-weight: 400; line-height: 1; letter-spacing: .2px; }
+.cd__lbl { font-family: system-ui, sans-serif; font-size: 8.5px; letter-spacing: 1px; margin-top: .25rem; opacity: .9; }
+
+/* ---------- Scroll cue ---------- */
+.scroll-cue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
+  margin-top: 1.2rem;
+}
+.scroll-cue__mouse {
+  width: 22px; height: 34px;
+  border: 1.5px solid rgba(255, 255, 255, .8);
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  padding-top: 5px;
+}
+.scroll-cue__wheel {
+  width: 3px; height: 7px;
+  background: #fff;
+  border-radius: 2px;
+  animation: wheel 1.5s ease-in-out infinite;
+}
+.scroll-cue__text { font-size: .75rem; letter-spacing: .05em; opacity: .85; }
+
+/* ============================================================
+   ORTAK BÖLÜM
+   ============================================================ */
+.section {
+  padding: clamp(3rem, 9vw, 5.5rem) 1.25rem;
+}
+.section__title {
+  text-align: center;
+  font-size: clamp(30px, 8vw, 35px);
+  color: var(--accent);
+  margin-bottom: 2.2rem;
+}
+.section__title--light { color: #fff; text-shadow: 0 2px 12px rgba(0, 0, 0, .3); }
+.section--form .section__title { font-size: clamp(32px, 9vw, 38px); }
+
+.section--meet {
+  background: var(--paper);
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+.section--meet .album { margin-top: 1.4rem; }
+
+/* ---------- Etkinlik kartı ---------- */
+.event-card {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto 1.6rem;
+  border: 1px solid #b89aa6;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--img-card) center / cover no-repeat;
+}
+.event-card__overlay { position: absolute; inset: 0; background: rgba(255, 255, 255, .58); }
+.event-card__inner {
+  position: relative;
+  padding: 2.6rem 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: var(--accent);
+}
+.event-card__type { font-size: 33px; font-weight: 500; line-height: 1.3; }
+.event-card__date { font-size: 17px; }
+.event-card__venue { font-size: 16px; opacity: .9; }
+.event-card__addr { font-family: var(--sans); font-size: 12.5px; opacity: .7; margin-top: -.5rem; }
+.event-card .btn { margin-top: .4rem; }
+
+/* ============================================================
+   ANI ALBÜMÜ (davetli yükleme: foto / video / sesli not)
+   ============================================================ */
+.album {
+  width: 100%;
+  max-width: 380px; /* event-card ile aynı genişlik */
+  min-height: 286px; /* event-card ile aynı yükseklik (boş hâlde) */
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 2rem 1.3rem;
+  box-shadow: 0 6px 22px rgba(75, 65, 82, .06);
+}
+
+.album__header { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.album__title { font-size: 35px; line-height: 1.1; color: var(--accent); }
+.album__subtitle { font-family: var(--serif); font-size: 15px; color: var(--accent); opacity: .75; margin-top: .15rem; }
+
+.album__actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .5rem;
+  margin-top: 1.5rem;
+}
+.album__add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .35rem;
+  font-family: var(--sans);
+  font-size: 12.5px;
+  color: var(--accent);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: .8rem .4rem;
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease, transform .1s ease;
+}
+.album__add svg { width: 22px; height: 22px; color: var(--rose); }
+.album__add:hover { background: #faf5f8; border-color: #e3cdd9; }
+.album__add:active { transform: scale(.97); }
+
+/* Ses kaydedici */
+.recorder {
+  margin-top: .9rem;
+  padding: 1rem;
+  border: 1px dashed #d9cfd6;
+  border-radius: 12px;
+  background: #faf7f9;
+}
+.recorder__row { display: flex; align-items: center; gap: .5rem; justify-content: center; }
+.recorder__dot { width: 10px; height: 10px; border-radius: 50%; background: #cbb8c4; }
+.recorder__dot.is-on { background: #e0245e; animation: pulse 1s infinite; }
+.recorder__time { font-family: var(--sans); font-size: 14px; color: var(--accent); min-width: 38px; }
+.recorder__hint { font-family: var(--sans); font-size: 12.5px; color: var(--muted); }
+.recorder__preview { width: 100%; margin-top: .7rem; }
+.recorder__controls { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .8rem; }
+.recorder__btn { flex: 1; min-width: 110px; width: auto; margin-top: 0; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+
+/* Yatay kaydırmalı şerit (App Store / Google Play tarzı) */
+.album__grid {
+  display: flex;
+  gap: .6rem;
+  margin-top: 1.2rem;
+  overflow-x: auto;
+  padding-bottom: .5rem;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #d9cfd6 transparent;
+}
+.album__grid::-webkit-scrollbar { height: 6px; }
+.album__grid::-webkit-scrollbar-thumb { background: #d9cfd6; border-radius: 999px; }
+
+/* Anı kartları — hepsi eşit kare */
+.mem {
+  position: relative;
+  flex: 0 0 auto;
+  width: 150px;
+  height: 150px;
+  margin: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(75, 65, 82, .1);
+  background: #fff;
+  scroll-snap-align: start;
+}
+.mem img,
+.mem video { display: block; width: 100%; height: 100%; object-fit: cover; background: #f0ebee; }
+.mem__del {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(0, 0, 0, .45);
+  color: #fff;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+}
+.mem__del:hover { background: rgba(0, 0, 0, .65); }
+
+/* Sesli not — kare kart, özel oynat butonu */
+.mem--voice { background: linear-gradient(140deg, #f3e6ee, #efe1ea); }
+.mem--voice .mem__del { background: rgba(75, 65, 82, .5); }
+.voice {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .45rem;
+  color: var(--accent);
+}
+.voice__icon { font-size: 1.5rem; }
+.voice__play {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--rose);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 1rem;
+}
+.voice__time { font-family: var(--sans); font-size: 12px; color: var(--accent); }
+.mem--voice audio { display: none; }
+
+/* Yükleniyor kartı */
+.mem--uploading { display: grid; place-items: center; background: #faf5f8; }
+.mem__spin {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid #e6d8e2;
+  border-top-color: var(--rose);
+  animation: music-spin .8s linear infinite;
+}
+
+/* ============================================================
+   DAVETLİ FORMU (RSVP)
+   ============================================================ */
+.section--form {
+  position: relative;
+  background: var(--img-form) center / cover no-repeat;
+  overflow: hidden;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.form__overlay { position: absolute; inset: 0; background: rgba(55, 45, 52, .42); }
+.form__content {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+}
+.rsvp { display: flex; flex-direction: column; gap: 1.1rem; }
+.field { display: flex; flex-direction: column; gap: .4rem; }
+.field label {
+  color: #fff;
+  font-size: 14px;
+  letter-spacing: .02em;
+}
+.field input,
+.field select,
+.field textarea {
+  font-family: var(--sans);
+  font-size: 1rem;
+  color: #3a3340;
+  background: #fff;
+  border: 0;
+  border-radius: 8px;
+  padding: .85rem 1rem;
+  width: 100%;
+  outline: none;
+}
+.field textarea { resize: vertical; }
+.field input:focus,
+.field select:focus,
+.field textarea:focus { box-shadow: 0 0 0 3px rgba(186, 104, 141, .35); }
+
+/* Cloudflare Turnstile kutusu (RSVP) — ortalanmış */
+.ts-box { display: flex; justify-content: center; min-height: 65px; }
+
+.form__thanks {
+  margin-top: 1.4rem;
+  text-align: center;
+  color: #fff;
+  font-size: 1.05rem;
+  background: rgba(186, 104, 141, .85);
+  padding: 1rem;
+  border-radius: 10px;
+}
+
+/* ============================================================
+   ANİMASYONLAR
+   ============================================================ */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes wheel {
+  0%   { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(8px); opacity: 0; }
+}
+
+/* Kaydırınca beliren bölümler */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .8s ease, transform .8s ease; }
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, .reveal { animation: none !important; transition: none !important; opacity: 1 !important; transform: none !important; }
+}
+
+/* ============================================================
+   MASAÜSTÜ — içerik telefon genişliğinde ortalanır
+   ============================================================ */
+@media (min-width: 720px) {
+  .event-card { max-width: 420px; }
+  .album { max-width: 420px; }
+}
+
+/* ============================================================
+   ARKA PLAN MÜZİĞİ — sol üst floating buton
+   ============================================================ */
+.music-dock {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.music-toggle {
+  position: relative;
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: rgba(75, 65, 82, .28);
+  border: 1px solid rgba(255, 255, 255, .45);
+  backdrop-filter: blur(8px) saturate(1.2);
+  -webkit-backdrop-filter: blur(8px) saturate(1.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+  cursor: pointer;
+  transition: background .2s ease, transform .15s ease;
+}
+/* İlk dokunuşa kadar dikkat çekici nabız + "🎵 dokun" ipucu */
+.music-dock.is-hint .music-toggle {
+  animation: music-nudge 1.8s ease-in-out infinite;
+}
+@keyframes music-nudge {
+  0%   { transform: scale(1);    box-shadow: 0 4px 12px rgba(0, 0, 0, .15), 0 0 0 0 rgba(186, 104, 141, .5); }
+  70%  { transform: scale(1.06); box-shadow: 0 4px 16px rgba(0, 0, 0, .2),  0 0 0 12px rgba(186, 104, 141, 0); }
+  100% { transform: scale(1);    box-shadow: 0 4px 12px rgba(0, 0, 0, .15), 0 0 0 0 rgba(186, 104, 141, 0); }
+}
+.music-toggle__hint {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #fff;
+  background: rgba(75, 65, 82, .55);
+  backdrop-filter: blur(8px) saturate(1.2);
+  -webkit-backdrop-filter: blur(8px) saturate(1.2);
+  padding: 6px 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .35);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity .35s ease, transform .35s ease;
+}
+.music-dock.is-hint .music-toggle__hint {
+  opacity: 1;
+  transform: translateX(0);
+  animation: hint-bob 1.8s ease-in-out infinite;
+}
+@keyframes hint-bob { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(3px); } }
+@media (prefers-reduced-motion: reduce) {
+  .music-dock.is-hint .music-toggle,
+  .music-dock.is-hint .music-toggle__hint { animation: none; }
+}
+.music-toggle:hover { background: rgba(75, 65, 82, .42); }
+.music-toggle:active { transform: scale(.94); }
+.music-toggle__note { width: 22px; height: 22px; }
+.music-toggle.is-playing .music-toggle__note {
+  transform-origin: 50% 50%;
+  animation: music-spin 5s linear infinite;
+}
+.music-toggle__slash {
+  position: absolute;
+  width: 30px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transform: rotate(45deg);
+  box-shadow: 0 2px 0 rgba(75, 65, 82, .35);
+  display: none;
+}
+.music-toggle.is-off .music-toggle__slash { display: block; }
+@keyframes music-spin { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   DİL SEÇİCİ — sağ üst floating bayraklar
+   ============================================================ */
+.lang-dock {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+  display: flex;
+  gap: 3px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(75, 65, 82, .28);
+  border: 1px solid rgba(255, 255, 255, .45);
+  backdrop-filter: blur(8px) saturate(1.2);
+  -webkit-backdrop-filter: blur(8px) saturate(1.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+}
+.lang-btn {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  opacity: .5;
+  transition: opacity .2s ease, transform .15s ease, background .2s ease;
+}
+.lang-btn:hover { opacity: 1; }
+.lang-btn.is-active { opacity: 1; background: rgba(255, 255, 255, .4); }
+.lang-btn:active { transform: scale(.9); }
