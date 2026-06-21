@@ -162,13 +162,15 @@ form.addEventListener("submit", async (e) => {
 
   const refreshEmpty = () => { if (empty) empty.hidden = grid.children.length > 0; };
   const fmtDur = (s) => Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
-  /* ---- Kart render (paylaşımlı albüm; misafir silmesi yok) ---- */
-  function addMemory({ type, url, duration, prepend = true }) {
+  /* ---- Kart render. Misafir kendi eklediğini X ile kaldırabilir;
+         fotoğrafa tıklayınca lightbox'ta büyür. ---- */
+  function addMemory({ type, url, duration, r2_key, prepend = true }) {
     const fig = document.createElement("figure");
     fig.className = "mem mem--" + type;
 
     if (type === "photo") {
       fig.innerHTML = '<img src="' + url + '" alt="' + t("mem.alt") + '" loading="lazy" />';
+      fig.querySelector("img").addEventListener("click", () => openLightbox(url));
     } else if (type === "video") {
       fig.innerHTML = '<video src="' + url + '" controls playsinline preload="metadata"></video>';
     } else {
@@ -188,9 +190,56 @@ form.addEventListener("submit", async (e) => {
       audio.addEventListener("ended", () => { playIcon.textContent = "▶"; });
     }
 
+    // Kaldır (X) butonu — sol üst. Yalnız bu oturumda eklenen (r2_key'li) kartlarda.
+    if (r2_key) {
+      const del = document.createElement("button");
+      del.type = "button";
+      del.className = "mem__del";
+      del.textContent = "×";
+      del.setAttribute("aria-label", t("mem.delete"));
+      del.addEventListener("click", (e) => { e.stopPropagation(); deleteMemory(fig, r2_key, del); });
+      fig.appendChild(del);
+    }
+
     if (prepend) grid.prepend(fig); else grid.appendChild(fig);
     refreshEmpty();
     return fig;
+  }
+
+  /* ---- Lightbox: fotoğrafa tıklayınca büyüt (tek seferlik oluşturulur) ---- */
+  function openLightbox(url) {
+    let lb = document.getElementById("lightbox");
+    if (!lb) {
+      lb = document.createElement("div");
+      lb.id = "lightbox";
+      lb.className = "lightbox";
+      lb.innerHTML =
+        '<img class="lightbox__img" alt="" />' +
+        '<button class="lightbox__close" type="button" aria-label="' + t("mem.close") + '">×</button>';
+      lb.addEventListener("click", () => lb.classList.remove("is-open"));
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape") lb.classList.remove("is-open"); });
+      document.body.appendChild(lb);
+    }
+    lb.querySelector(".lightbox__img").src = url;
+    lb.classList.add("is-open");
+  }
+
+  /* ---- Anıyı kaldır — sunucuda guest_id sahiplik doğrulamasıyla siler ---- */
+  async function deleteMemory(fig, r2_key, btn) {
+    if (!window.confirm(t("mem.deleteConfirm"))) return;
+    if (!sb) { alert(t("rsvp.noServer")); return; }
+    btn.disabled = true;
+    try {
+      const gid = localStorage.getItem("guest_id") || "";
+      const { data, error } = await sb.functions.invoke("memory-delete", { body: { r2_key, guest_id: gid } });
+      if (error) throw error;
+      if (!data || !data.ok) throw new Error((data && data.error) || "delete_failed");
+      fig.remove();
+      refreshEmpty();
+    } catch (e) {
+      btn.disabled = false;
+      alert(t("mem.deleteError") + "\n(" + (e.message || e) + ")");
+    }
   }
 
   /* ---- Yükleniyor kartı (geçici) ---- */
@@ -243,7 +292,7 @@ form.addEventListener("submit", async (e) => {
       if (insErr) throw insErr;
 
       card.remove();
-      addMemory({ type, url: publicUrl, duration, prepend: true });
+      addMemory({ type, url: publicUrl, duration, r2_key: data.key, prepend: true });
     } catch (e) {
       card.remove();
       alert(t("up.error") + "\n(" + (e.message || e) + ")");
