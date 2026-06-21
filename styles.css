@@ -588,3 +588,23 @@ body {
 .lang-btn:hover { opacity: 1; }
 .lang-btn.is-active { opacity: 1; background: rgba(255, 255, 255, .4); }
 .lang-btn:active { transform: scale(.9); }
+
+/* ============================================================
+   GECE MODU (FORCE-DARK) DİRENCİ
+   ------------------------------------------------------------
+   Mi Browser gibi bazı tarayıcıların gece modu, color-scheme:light
+   kilidini yok sayıp beyaz yüzeyleri (form, kartlar, bölüm) zorla
+   karartıyor. Chromium force-dark, BACKGROUND-IMAGE'lı öğeleri
+   çevirmez → beyaz yüzeylere düz beyaz gradyan veriyoruz. Normal
+   tarayıcılarda görünüm değişmez (beyaz üstüne beyaz).
+   ============================================================ */
+.section--meet,
+.album,
+.album__add,
+.field input,
+.field select,
+.field textarea,
+.btn--white {
+  background-image: linear-gradient(#fff, #fff);
+}
+.recorder { background-image: linear-gradient(#faf7f9, #faf7f9); }
