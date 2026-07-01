@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="light" />
   <meta name="darkreader-lock" />
-  <title>Anı Albümü — Çift Görünümü</title>
+  <title>Çift Paneli — Yanıtlar & Anılar</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Sacramento&family=Roboto+Condensed:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
@@ -13,11 +13,37 @@
     * { box-sizing:border-box; margin:0; padding:0; }
     body { font-family:"Roboto Condensed",system-ui,sans-serif; color:var(--accent); background:#faf7f5; padding:1.5rem 1rem 4rem; }
     h1 { font-family:"Sacramento",cursive; font-size:42px; text-align:center; color:var(--accent); }
-    .sub { text-align:center; color:#9b8f97; font-size:14px; margin:.2rem 0 1.5rem; }
+    .sub { text-align:center; color:#9b8f97; font-size:14px; margin:.2rem 0 1.4rem; }
     .keybar { max-width:420px; margin:0 auto 1.2rem; display:flex; gap:.5rem; }
     .keybar input { flex:1; padding:.6rem .8rem; border:1px solid var(--line); border-radius:8px; font-size:14px; }
     .keybar button { padding:.6rem 1.1rem; border:0; border-radius:8px; background:var(--rose); color:#fff; cursor:pointer; }
-    .msg { text-align:center; color:#9b8f97; margin:1.5rem 0; }
+    .msg { text-align:center; color:#9b8f97; margin:1.2rem 0; }
+
+    /* Sekmeler */
+    .tabs { display:none; gap:.5rem; max-width:1000px; margin:0 auto 1.2rem; justify-content:center; }
+    .tabs.is-shown { display:flex; }
+    .tab { padding:.5rem 1.1rem; border:1px solid var(--line); background:#fff; border-radius:999px; cursor:pointer; font-size:14px; color:var(--accent); }
+    .tab.is-active { background:var(--accent); color:#fff; border-color:var(--accent); }
+
+    /* RSVP özet + kartlar */
+    .summary { max-width:640px; margin:0 auto 1rem; display:flex; gap:.5rem; flex-wrap:wrap; justify-content:center; }
+    .chip { background:#fff; border:1px solid var(--line); border-radius:999px; padding:.35rem .85rem; font-size:14px; }
+    .chip b { font-size:15px; }
+    .rsvp-list { max-width:640px; margin:0 auto; display:flex; flex-direction:column; gap:.6rem; }
+    .rsvp-card { background:#fff; border:1px solid var(--line); border-left:4px solid #ccc; border-radius:10px; padding:.7rem .9rem; box-shadow:0 2px 8px rgba(75,65,82,.05); }
+    .rsvp-card--yes { border-left-color:#3aa76d; }
+    .rsvp-card--maybe { border-left-color:#e0a63a; }
+    .rsvp-card--no { border-left-color:#b9adb4; }
+    .rsvp-top { display:flex; justify-content:space-between; align-items:center; gap:.5rem; }
+    .rsvp-name { font-size:15.5px; font-weight:500; }
+    .badge { font-size:12px; padding:.18rem .65rem; border-radius:999px; white-space:nowrap; }
+    .badge--yes { background:#e5f5ec; color:#2b8a5a; }
+    .badge--maybe { background:#fdf1dd; color:#a9761a; }
+    .badge--no { background:#f2eef0; color:#8a7f86; }
+    .rsvp-info { color:#9b8f97; font-size:13px; margin-top:.3rem; }
+    .rsvp-note { margin-top:.4rem; font-size:13.5px; color:var(--accent); font-style:italic; }
+
+    /* Anılar */
     .grid { max-width:1000px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:1rem; }
     .card { background:#fff; border:1px solid var(--line); border-radius:12px; overflow:hidden; box-shadow:0 4px 14px rgba(75,65,82,.08); }
     .card img, .card video { display:block; width:100%; aspect-ratio:1/1; object-fit:cover; background:#f0ebee; }
@@ -27,48 +53,126 @@
     .meta { padding:.5rem .6rem; font-size:12.5px; }
     .meta b { color:var(--accent); }
     .meta span { color:#9b8f97; }
+    .empty { text-align:center; color:#9b8f97; margin:2rem 0; }
   </style>
 </head>
 <body>
-  <h1>Anı Albümü</h1>
-  <p class="sub">Çifte özel görünüm — misafirlerin paylaştığı tüm anılar</p>
+  <h1>Çift Paneli</h1>
+  <p class="sub">Yalnızca size özel — davetli yanıtları ve paylaşılan anılar</p>
 
   <div class="keybar">
     <input id="key" type="password" placeholder="Admin anahtarı" autocomplete="off" />
     <button id="go" type="button">Göster</button>
   </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab is-active" id="tabRsvp" type="button">📋 Davetli Yanıtları</button>
+    <button class="tab" id="tabMem" type="button">🖼 Anı Albümü</button>
+  </div>
+
   <div id="msg" class="msg">Anahtarı girip "Göster"e bas.</div>
-  <div id="grid" class="grid"></div>
+
+  <div id="rsvpView">
+    <div class="summary" id="rsvpSummary"></div>
+    <div class="rsvp-list" id="rsvpList"></div>
+  </div>
+  <div id="gridView" hidden>
+    <div id="grid" class="grid"></div>
+  </div>
 
   <script src="config.js"></script>
   <script>
     const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-    const fmtDate = (s) => { try { return new Date(s).toLocaleString("tr-TR"); } catch (_) { return ""; } };
+    const fmtDateTime = (s) => { try { return new Date(s).toLocaleString("tr-TR"); } catch (_) { return ""; } };
+    const fmtDate = (s) => { try { return new Date(s).toLocaleDateString("tr-TR"); } catch (_) { return ""; } };
     const fmtDur = (s) => (s == null ? "" : Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"));
-    const grid = document.getElementById("grid");
+
+    const DURUM = {
+      katilacagim: { label: "Katılacak", cls: "yes" },
+      "net-degil": { label: "Net değil", cls: "maybe" },
+      katilmayacagim: { label: "Gelmeyecek", cls: "no" },
+    };
+
     const msg = document.getElementById("msg");
     const keyInput = document.getElementById("key");
+    const grid = document.getElementById("grid");
+    const rsvpList = document.getElementById("rsvpList");
+    const rsvpSummary = document.getElementById("rsvpSummary");
+    const tabs = document.getElementById("tabs");
+    const tabRsvp = document.getElementById("tabRsvp");
+    const tabMem = document.getElementById("tabMem");
+
+    function showTab(which) {
+      const isR = which === "rsvp";
+      document.getElementById("rsvpView").hidden = !isR;
+      document.getElementById("gridView").hidden = isR;
+      tabRsvp.classList.toggle("is-active", isR);
+      tabMem.classList.toggle("is-active", !isR);
+    }
+    tabRsvp.addEventListener("click", () => showTab("rsvp"));
+    tabMem.addEventListener("click", () => showTab("mem"));
+
+    function renderRsvp(list) {
+      rsvpList.innerHTML = "";
+      rsvpSummary.innerHTML = "";
+      let gelen = 0, gelenKisi = 0, belki = 0, belkiKisi = 0, gelmeyen = 0;
+      list.forEach((r) => {
+        if (r.durum === "katilacagim") { gelen++; gelenKisi += Number(r.kisi) || 0; }
+        else if (r.durum === "net-degil") { belki++; belkiKisi += Number(r.kisi) || 0; }
+        else if (r.durum === "katilmayacagim") { gelmeyen++; }
+      });
+      rsvpSummary.innerHTML =
+        '<span class="chip">Toplam yanıt: <b>' + list.length + "</b></span>" +
+        '<span class="chip">✅ Kesin gelen: <b>' + gelenKisi + "</b> kişi</span>" +
+        '<span class="chip">🤔 Net değil: <b>' + belkiKisi + "</b> kişi</span>" +
+        '<span class="chip">❌ Gelmeyecek: <b>' + gelmeyen + "</b></span>";
+
+      if (!list.length) { rsvpList.innerHTML = '<p class="empty">Henüz davetli yanıtı yok.</p>'; return; }
+      list.forEach((r) => {
+        const info = DURUM[r.durum] || { label: r.durum || "—", cls: "no" };
+        const card = document.createElement("div");
+        card.className = "rsvp-card rsvp-card--" + info.cls;
+        let html =
+          '<div class="rsvp-top"><span class="rsvp-name">' + esc(r.ad_soyad || "—") + "</span>" +
+          '<span class="badge badge--' + info.cls + '">' + esc(info.label) + "</span></div>" +
+          '<div class="rsvp-info">' + (r.kisi != null ? "👥 " + esc(r.kisi) + " kişi · " : "") + esc(fmtDate(r.created_at)) + "</div>";
+        if (r.not_metni) html += '<div class="rsvp-note">“' + esc(r.not_metni) + "”</div>";
+        card.innerHTML = html;
+        rsvpList.appendChild(card);
+      });
+    }
+
+    function renderMemories(mems) {
+      grid.innerHTML = "";
+      if (!mems.length) { grid.innerHTML = '<p class="empty">Henüz anı eklenmemiş.</p>'; return; }
+      mems.forEach((m) => {
+        const c = document.createElement("div"); c.className = "card";
+        let media;
+        if (m.type === "photo") media = '<img src="' + esc(m.url) + '" loading="lazy" />';
+        else if (m.type === "video") media = '<video src="' + esc(m.url) + '" controls preload="metadata"></video>';
+        else media = '<div class="voice"><span class="ico">🎙️</span><audio src="' + esc(m.url) + '" controls></audio><span>' + fmtDur(m.duration) + "</span></div>";
+        c.innerHTML = media + '<div class="meta"><b>' + esc(m.name || "Anonim") + "</b><br><span>" + fmtDateTime(m.created_at) + "</span></div>";
+        grid.appendChild(c);
+      });
+    }
 
     async function load(key) {
       if (!key) { msg.textContent = "Anahtar gerekli."; return; }
-      msg.textContent = "Yükleniyor…"; grid.innerHTML = "";
+      msg.textContent = "Yükleniyor…";
       try {
-        const r = await fetch(window.SUPABASE_URL + "/functions/v1/admin-memories?key=" + encodeURIComponent(key));
+        const r = await fetch(window.SUPABASE_URL + "/functions/v1/admin-memories?rsvp=1&key=" + encodeURIComponent(key));
         const d = await r.json();
         if (!r.ok) { msg.textContent = "Hata: " + (d.error || r.status) + (r.status === 401 ? " (anahtar yanlış)" : ""); return; }
         localStorage.setItem("admin_key", key);
         const mems = d.memories || [];
-        if (!mems.length) { msg.textContent = "Henüz anı eklenmemiş."; return; }
-        msg.textContent = mems.length + " anı";
-        mems.forEach((m) => {
-          const c = document.createElement("div"); c.className = "card";
-          let media;
-          if (m.type === "photo") media = '<img src="' + esc(m.url) + '" loading="lazy" />';
-          else if (m.type === "video") media = '<video src="' + esc(m.url) + '" controls preload="metadata"></video>';
-          else media = '<div class="voice"><span class="ico">🎙️</span><audio src="' + esc(m.url) + '" controls></audio><span>' + fmtDur(m.duration) + '</span></div>';
-          c.innerHTML = media + '<div class="meta"><b>' + esc(m.name || "Anonim") + '</b><br><span>' + fmtDate(m.created_at) + "</span></div>";
-          grid.appendChild(c);
-        });
+        const rsvp = d.rsvp || [];
+        renderRsvp(rsvp);
+        renderMemories(mems);
+        tabRsvp.textContent = "📋 Davetli Yanıtları (" + rsvp.length + ")";
+        tabMem.textContent = "🖼 Anı Albümü (" + mems.length + ")";
+        tabs.classList.add("is-shown");
+        msg.textContent = "";
+        showTab("rsvp");
       } catch (e) { msg.textContent = "Bağlantı hatası: " + e.message; }
     }
 
